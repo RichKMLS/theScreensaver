@@ -1,152 +1,150 @@
+#!/bin/zsh
+ 
+#  _   _
+# | |_| |__   ___
+# | __| '_ \ / _ \
+# | |_| | | |  __/
+#  \__|_| |_|\___|
+#
+#
+#  ___  ___ _ __ ___  ___ _ __  ___  __ ___   _____ _ __
+# / __|/ __| '__/ _ \/ _ \ '_ \/ __|/ _` \ \ / / _ \ '__|
+# \__ \ (__| | |  __/  __/ | | \__ \ (_| |\ V /  __/ |
+# |___/\___|_|  \___|\___|_| |_|___/\__,_| \_/ \___|_|
+#
+ 
+ # -----------------------------------------------------------
+   screensaverDir="/home/$USER/Media/Screensaver/"
+   EDL="${screensaverDir}/mpvscreensaver.EDL"
+   fileDir="${screensaverDir}files/"
+   archiveDir="${screensaverDir}archive/"
+   asciA=$(cat "${screensaverDir}asci/asciA")
+   asciB=$(cat "${screensaverDir}asci/asciB")
+  
+   numfiles=100 #number of videos per EDL
+   lenVid=9 #length of each video within EDL in seconds
+   theSpeed=0.9 #speed mpv will play EDL file
+  # -----------------------------------------------------------
+  
+  
+  while true; do
+  
+  
+      clear
+  
+  
+      # take previous EDL file and move it to Archive folder
+      mv $EDL $archiveDir
+  
+  
+      # create new EDL file with EDL header
+      echo "# mpv EDL v0" >> $EDL
+  
+  
+      wait
+  
+  
+      # loop to generate random EDL file
+      for (( i=0; i<$numfiles; ++i )); do
+  
+  
+          # choose random file from directory
+          file="$(shuf -n1 -e ${fileDir}*)"
+  
+  
+          # determine where in video it is okay to start from.
+          #     the video must be able to complete a total
+          #     $lenVid seconds without video ending before then
+  
+          maxStart=$(mediainfo --Inform="Video;%Duration%" $file)
+          maxStart=$(echo -e "($maxStart)*0.0009-${lenVid}" \
+                  | bc | sed 's/\..*$//g')
+  
+  
+          # start selected $file at anytime before $maxStart
+          start=$(( $RANDOM % $maxStart ))
+  
+  
+          # display loading text while creating EDL file
+  
+          clear && echo "\n\n\n\n\n\n\n\n\n"
+          echo "Generating Randomized Screensaver..." | \
+                  centertext
+  
+  
+          # display the current file number as
+          #     a percentage (100 files long)
+          echo -e "\n$i%\n\n" | centertext
+  
+  
+          # display a simple animation that plays in
+          #     the terminal while creating EDL file
+          if [ "$(( $i % 2 ))" -eq 0 ]; then
+                  echo $asciA
+          else
+                  echo $asciB
+          fi
+  
+  
+          # take the file, the start time, and
+          #     the length of the video and
+          #     insert it into the last line of
+          #     the new EDL file being created
+          echo $file,$start,$lenVid >> $EDL
+  
+  
+          wait
+  
+  
+     # end this loop, move to next
+     #     file until $numfiles files are looped through
+     done
+ 
+ 
+     # start timer
+     SECONDS=0
+ 
+ 
+     # use mpv to play EDL file
+     #     no audio and force aspect ratio
+     #     slowed down to $theSpeed
+     mpv $EDL \
+             --really-quiet \
+             --no-audio \
+             --brightness=0 \
+             --speed=$theSpeed \
+             --video-aspect-override=16:9
+ 
+ 
+     # wait for video to end
+     #     before moving to next step
+     wait
+ 
+ 
+     # sets the amount of seconds that
+     #     have passed since the timer started
+     duration=$SECONDS
+ 
+ 
+     # calculate how long it should take mpv
+     #     to play EDL file
+     edlLength="($lenVid * $numfiles) *"
+     edlLength+=" (1 - $theSpeed) +"
+     edlLength+=" ($lenVid * $numfiles) - 1 / 1"
+     edlLength=${$(echo "$edlLength" | bc)%.*}
+ 
+ 
+     # break out of screensaver generation loop
+     #     if user exits before the total EDL
+     #     file has played
+     if (( $duration < $edlLength )); then
+            clear && break
+     fi
+ 
+ 
+  # end this loop - start next EDL file if
+  #     user did not already break out
+  done
+ 
 
-
-  1 #!/bin/zsh
-  2 
-  3 #  _   _
-  4 # | |_| |__   ___
-  5 # | __| '_ \ / _ \
-  6 # | |_| | | |  __/
-  7 #  \__|_| |_|\___|
-  8 #
-  9 #
- 10 #  ___  ___ _ __ ___  ___ _ __  ___  __ ___   _____ _ __
- 11 # / __|/ __| '__/ _ \/ _ \ '_ \/ __|/ _` \ \ / / _ \ '__|
- 12 # \__ \ (__| | |  __/  __/ | | \__ \ (_| |\ V /  __/ |
- 13 # |___/\___|_|  \___|\___|_| |_|___/\__,_| \_/ \___|_|
- 14 #
- 15 
- 16 # -----------------------------------------------------------
- 17  screensaverDir="/home/$USER/Media/Screensaver/"
- 18  EDL="${screensaverDir}/mpvscreensaver.EDL"
- 19  fileDir="${screensaverDir}files/"
- 20  archiveDir="${screensaverDir}archive/"
- 21  asciA=$(cat "${screensaverDir}asci/asciA")
- 22  asciB=$(cat "${screensaverDir}asci/asciB")
- 23 
- 24  numfiles=100 #number of videos per EDL
- 25  lenVid=9 #length of each video within EDL in seconds
- 26  theSpeed=0.9 #speed mpv will play EDL file
- 27 # -----------------------------------------------------------
- 28 
- 29 
- 30 while true; do
- 31 
- 32 
- 33     clear
- 34 
- 35 
- 36     # take previous EDL file and move it to Archive folder
- 37     mv $EDL $archiveDir
- 38 
- 39 
- 40     # create new EDL file with EDL header
- 41     echo "# mpv EDL v0" >> $EDL
- 42 
- 43 
- 44     wait
- 45 
- 46 
- 47     # loop to generate random EDL file
- 48     for (( i=0; i<$numfiles; ++i )); do
- 49 
- 50 
- 51         # choose random file from directory
- 52         file="$(shuf -n1 -e ${fileDir}*)"
- 53 
- 54 
- 55         # determine where in video it is okay to start from.
- 56         #     the video must be able to complete a total
- 57         #     $lenVid seconds without video ending before then
- 58 
- 59         maxStart=$(mediainfo --Inform="Video;%Duration%" $file)
- 60         maxStart=$(echo -e "($maxStart)*0.0009-${lenVid}" \
- 61                 | bc | sed 's/\..*$//g')
- 62 
- 63 
- 64         # start selected $file at anytime before $maxStart
- 65         start=$(( $RANDOM % $maxStart ))
- 66 
- 67 
- 68         # display loading text while creating EDL file
- 69 
- 70         clear && echo "\n\n\n\n\n\n\n\n\n"
- 71         echo "Generating Randomized Screensaver..." | \
- 72                 centertext
- 73 
- 74 
- 75         # display the current file number as
- 76         #     a percentage (100 files long)
- 77         echo -e "\n$i%\n\n" | centertext
- 78 
- 79 
- 80         # display a simple animation that plays in
- 81         #     the terminal while creating EDL file
- 82         if [ "$(( $i % 2 ))" -eq 0 ]; then
- 83                 echo $asciA
- 84         else
- 85                 echo $asciB
- 86         fi
- 87 
- 88 
- 89         # take the file, the start time, and
- 90         #     the length of the video and
- 91         #     insert it into the last line of
- 92         #     the new EDL file being created
- 93         echo $file,$start,$lenVid >> $EDL
- 94 
- 95 
- 96         wait
- 97 
- 98 
- 99     # end this loop, move to next
-100     #     file until $numfiles files are looped through
-101     done
-102 
-103 
-104     # start timer
-105     SECONDS=0
-106 
-107 
-108     # use mpv to play EDL file
-109     #     no audio and force aspect ratio
-110     #     slowed down to $theSpeed
-111     mpv $EDL \
-112             --really-quiet \
-113             --no-audio \
-114             --brightness=0 \
-115             --speed=$theSpeed \
-116             --video-aspect-override=16:9
-117 
-118 
-119     # wait for video to end
-120     #     before moving to next step
-121     wait
-122 
-123 
-124     # sets the amount of seconds that
-125     #     have passed since the timer started
-126     duration=$SECONDS
-127 
-128 
-129     # calculate how long it should take mpv
-130     #     to play EDL file
-131     edlLength="($lenVid * $numfiles) *"
-132     edlLength+=" (1 - $theSpeed) +"
-133     edlLength+=" ($lenVid * $numfiles) - 1 / 1"
-134     edlLength=${$(echo "$edlLength" | bc)%.*}
-135 
-136 
-137     # break out of screensaver generation loop
-138     #     if user exits before the total EDL
-139     #     file has played
-140     if (( $duration < $edlLength )); then
-141            clear && break
-142     fi
-143 
-144 
-145  # end this loop - start next EDL file if
-146  #     user did not already break out
-147  done
-148 
-149
 
