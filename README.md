@@ -1,5 +1,5 @@
 
-<h1 align="center">theScreensaver</h1>
+<h1 align="center">theScreensaver:sparkles:</h1>
 
 #### <p align="center">Quickly create a randomized montage of all your favorite video files!</p>
 
