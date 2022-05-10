@@ -1,24 +1,28 @@
-# theScreensaver
+
+<h1 align="center">theScreensaver</h1>
+
+#### <p align="center">Quickly create a randomized montage of all your favorite video files!</p>
 
 
-  ```zsh
-         _   _
-        | |_| |__   ___
-        | __| '_ \ / _ \
-        | |_| | | |  __/
-         \__|_| |_|\___|
+Shell script that picks a random 9 second interval from a random video file (mkv, mp4, webm, etc) in a directory and appends it to an EDL file.
 
 
-         ___  ___ _ __ ___  ___ _ __  ___  __ ___   _____ _ __
-        / __|/ __| '__/ _ \/ _ \ '_ \/ __|/ _` \ \ / / _ \ '__|
-        \__ \ (__| | |  __/  __/ | | \__ \ (_| |\ V /  __/ |
-        |___/\___|_|  \___|\___|_| |_|___/\__,_| \_/ \___|_|
- 
- 
-  ```
+###### Requirements:
+- [`MediaInfo`](https://github.com/MediaArea/MediaInfo) - needed to get the length of video files
 
+        Ubuntu:
+        - snap install mediainfo
+        - apt install mediainfo
+        
+        Arch:
+        - pacman -S mediainfo
 
-Shell script that picks a random 9 second time from a random video file (mkv, mp4, webm, etc) in a directory and appends it to an EDL file. 
+- [`mpv`](https://github.com/mpv-player/mpv) - needed to play the EDL file once created.
 
-Uses mpv to play the EDL file once created.
+        Ubuntu:
+        - apt install mpv
+        
+        Arch:
+        - pacman -S mpv
+
 
