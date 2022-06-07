@@ -4,7 +4,7 @@
 #### <p align="center">Quickly create a randomized montage of all your favorite video files!</p>
 
 
-Shell script that picks a random 9 second interval from a random video file (mkv, mp4, webm, etc) in a directory and appends it to an EDL file.
+Shell script that picks a random 9 second interval from a random video file (mkv, mp4, webm, etc) in a directory and appends it to an EDL file. After 100 clips have been randomly selected mpv will automatically play the EDL file.
 
 
 ###### Requirements:
